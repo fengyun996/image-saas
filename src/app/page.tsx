@@ -1,8 +1,16 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { getServerAuthSession } from '@/server/auth';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerAuthSession();
+
+  if (!session?.user) {
+    return redirect('/api/auth/signin');
+  }
+
   return (
     <div className="flex h-screen justify-center items-center">
       <form className="w-full max-w-md flex flex-col gap-4">
