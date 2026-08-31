@@ -1,5 +1,21 @@
-import { initTRPC } from '@trpc/server';
+import { getServerAuthSession } from '@/server/auth';
+import { initTRPC, TRPCError } from '@trpc/server';
+import { createCallerFactory } from '@trpc/server/unstable-core-do-not-import';
 import type { Session } from 'next-auth';
+
+export async function createContext() {
+  {
+    const session = await getServerAuthSession();
+
+    if (!session?.user) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+      });
+    }
+
+    return { session };
+  }
+}
 
 interface Context {
   session: Session | null;
@@ -30,3 +46,5 @@ export const testRouter = router({
 });
 
 export type TestRouter = typeof testRouter;
+
+export const serverCaller = createCallerFactory()(testRouter);

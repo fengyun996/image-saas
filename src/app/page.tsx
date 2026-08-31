@@ -3,14 +3,15 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { trpcClient } from '@/utils/client';
-import { useEffect } from 'react';
+import { useTRPC } from '@/utils/client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Home() {
-  // 会运行两次
-  useEffect(() => {
-    trpcClient.hello.query();
-  }, []);
+  const trpc = useTRPC();
+
+  const { data, isLoading } = useQuery(
+    trpc.hello.queryOptions(void 0, { refetchOnWindowFocus: false }),
+  );
 
   return (
     <div className="flex h-screen justify-center items-center">
@@ -19,6 +20,8 @@ export default function Home() {
         <Input name="name" placeholder="App Name" />
         <Textarea name="description" placeholder="Description" />
         <Button type="submit">Submit</Button>
+        {data?.greeting}
+        {isLoading && <p>Loading...</p>}
       </form>
     </div>
   );
