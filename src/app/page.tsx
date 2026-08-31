@@ -1,15 +1,16 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { getServerAuthSession } from '@/server/auth';
-import { redirect } from 'next/navigation';
+import { trpcClient } from '@/utils/client';
+import { useEffect } from 'react';
 
-export default async function Home() {
-  const session = await getServerAuthSession();
-
-  if (!session?.user) {
-    return redirect('/api/auth/signin');
-  }
+export default function Home() {
+  // 会运行两次
+  useEffect(() => {
+    trpcClient.hello.query();
+  }, []);
 
   return (
     <div className="flex h-screen justify-center items-center">
