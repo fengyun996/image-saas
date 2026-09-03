@@ -52,7 +52,12 @@ export default function Home() {
     const uppy = new Uppy();
     uppy.use(AWSS3, {
       shouldUseMultipart: false,
-      generateObjectKey: () => `${getDateFolder()}/${crypto.randomUUID()}`,
+      generateObjectKey: (file) => {
+        const extensionIndex = file.name.lastIndexOf('.');
+        const extension = extensionIndex > 0 ? file.name.slice(extensionIndex) : '';
+
+        return `${getDateFolder()}/${crypto.randomUUID()}${extension}`;
+      },
       signRequest: ({ method, key }) => {
         if (method !== 'PUT') {
           throw new Error(`COS simple upload does not support ${method}`);
