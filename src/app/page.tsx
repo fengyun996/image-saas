@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 
 function getDateFolder() {
   const date = new Date();
-  const year = String(date.getFullYear()).slice(-2);
-  const day = String(date.getDate()).padStart(2, '0');
+  const year = String(date.getFullYear());
   const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
 
-  return `${year}${day}${month}`;
+  return `${year}${month}${day}`;
 }
 
 function ImagePreview({ file }: { file: any }) {
@@ -52,7 +52,7 @@ export default function Home() {
     const uppy = new Uppy();
     uppy.use(AWSS3, {
       shouldUseMultipart: false,
-      generateObjectKey: (file) => `${getDateFolder()}/${crypto.randomUUID()}-${file.name}`,
+      generateObjectKey: () => `${getDateFolder()}/${crypto.randomUUID()}`,
       signRequest: ({ method, key }) => {
         if (method !== 'PUT') {
           throw new Error(`COS simple upload does not support ${method}`);
