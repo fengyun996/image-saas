@@ -1,4 +1,5 @@
-import { serverCaller, createContext } from '@/utils/server';
+import { serverCaller } from '@/server/router';
+import { createContext } from '@/utils/server';
 
 export default async function Home() {
   // server调用

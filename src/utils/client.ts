@@ -1,13 +1,13 @@
 import { createTRPCContext } from '@trpc/tanstack-react-query';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import type { TestRouter } from './server';
+import type { AppRouter } from '@/server/router';
 
-export const trpcClient = createTRPCClient<TestRouter>({
+export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: 'http://127.0.0.1:3000/api/trpc',
+      url: '/api/trpc',
     }),
   ],
 });
 
-export const { TRPCProvider, useTRPC, useTRPCClient } = createTRPCContext<TestRouter>();
+export const { TRPCProvider, useTRPC, useTRPCClient } = createTRPCContext<AppRouter>();

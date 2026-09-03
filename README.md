@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Tencent COS upload
+
+The dashboard uses `@uppy/aws-s3` with Tencent COS's S3-compatible API. Add these server-only variables to `.env.local`:
+
+```env
+COS_SECRET_ID=your-secret-id
+COS_SECRET_KEY=your-secret-key
+COS_BUCKET=your-bucket-name
+COS_REGION=ap-guangzhou
+# Optional when using a custom COS endpoint
+# COS_ENDPOINT=https://your-bucket.cos.ap-guangzhou.myqcloud.com
+```
+
+Configure COS CORS to allow `PUT` and `GET` from the app origin, and allow the `ETag` response header. The current implementation uses single-part uploads; files are signed by tRPC and uploaded directly from the browser to COS.
+
 ## Getting Started
 
 First, run the development server:
