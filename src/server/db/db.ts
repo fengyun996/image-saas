@@ -1,7 +1,10 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from './schema';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-export const db = drizzle(process.env.DATABASE_URL!, {
-  schema,
-});
+import * as schema from "./schema";
+
+// for query purposes
+const queryClient = postgres(
+    "postgres://postgres:123123@localhost:5432/postgres"
+);
+export const db = drizzle(queryClient, { schema });

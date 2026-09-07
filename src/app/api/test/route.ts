@@ -1,17 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { insertUserSchema } from '@/server/db/validate-schema';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
-  const query = request.nextUrl.searchParams;
+import { updateUserSchema } from "@/server/db/validate-schema";
 
-  try {
-    const result = insertUserSchema.parse({
-      name: query.get('name'),
-      email: query.get('email'),
+export function GET(request: NextRequest) {
+    const query = request.nextUrl.searchParams;
+
+    // const name = query.get("name");
+    const email = query.get("email");
+    // const id = query.get("id");
+
+    const result = updateUserSchema.safeParse({
+        // name,
+        email,
+        // id,
     });
-    return NextResponse.json(result);
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message });
-  }
+
+    if (result.success) {
+        return NextResponse.json(result.data);
+    } else {
+        console.error(result.error);
+        return NextResponse.json({ error: result.error.message });
+    }
 }

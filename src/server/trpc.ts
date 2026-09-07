@@ -1,9 +1,53 @@
-import { initTRPC } from '@trpc/server';
+import { getServerSession } from "@/server/auth";
+import { TRPCError, createCallerFactory, initTRPC } from "@trpc/server";
+import { Session } from "next-auth";
 
-import type { Context } from '@/utils/server';
+// export async function createTRPCContext() {
+//     const session = await getServerSession();
 
-const t = initTRPC.context<Context>().create();
+//     return {
+//         session,
+//     };
+// }
 
-export const router = t.router;
-export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure;
+const t = initTRPC.context().create();
+
+const { router, procedure } = t;
+
+export const withLoggerProcedure = procedure.use(async ({ ctx, next }) => {
+    const start = Date.now();
+
+    const result = await next();
+
+    console.log("---> Api time:", Date.now() - start);
+
+    return result;
+});
+
+export const withSessionMiddleware = t.middleware(async ({ ctx, next }) => {
+    const session = await getServerSession();
+
+    return next({
+        ctx: {
+            session,
+        },
+    });
+});
+
+export const protectedProcedure = withLoggerProcedure
+    .use(withSessionMiddleware)
+    .use(async ({ ctx, next }) => {
+        if (!ctx.session?.user) {
+            throw new TRPCError({
+                code: "FORBIDDEN",
+            });
+        }
+
+        return next({
+            ctx: {
+                session: ctx.session!,
+            },
+        });
+    });
+
+export { router };
