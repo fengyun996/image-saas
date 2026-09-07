@@ -1,14 +1,15 @@
-import { defineConfig } from "drizzle-kit";
+import { defineConfig } from 'drizzle-kit';
+import 'dotenv/config';
 export default defineConfig({
-    schema: "./src/server/db/schema.ts",
-    driver: "pg",
-    dbCredentials: {
-        host: "localhost",
-        port: 5432,
-        user: "postgres",
-        password: "123123",
-        database: "postgres",
-    },
-    verbose: true,
-    strict: true,
+  schema: './src/server/db/schema.ts',
+  driver: 'pg',
+  dbCredentials: {
+    host: 'localhost',
+    port: 5432,
+    user: process.env.DATABASE_NAME!,
+    password: process.env.DATABASE_PWD!,
+    database: 'nextjs',
+  },
+  verbose: true,
+  strict: true,
 });
