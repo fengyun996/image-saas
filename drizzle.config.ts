@@ -4,8 +4,8 @@ export default defineConfig({
   schema: './src/server/db/schema.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    host: 'localhost',
-    port: 5432,
+    host: process.env.DATABASE_HOST!,
+    port: Number(process.env.DATABASE_PORT),
     user: process.env.DATABASE_NAME!,
     password: process.env.DATABASE_PWD!,
     database: 'nextjs',
