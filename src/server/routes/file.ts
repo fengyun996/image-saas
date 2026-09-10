@@ -88,4 +88,10 @@ export const fileRoutes = router({
 
       return photo[0];
     }),
+  listFiles: protectedProcedure.query(async ({ ctx }) => {
+    const result = db.query.files.findMany({
+      orderBy: (files, { desc }) => [desc(files.createdAt)],
+    });
+    return result;
+  }),
 });
