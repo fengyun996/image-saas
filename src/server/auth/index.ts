@@ -33,6 +33,7 @@ export const authOptions: AuthOptions = {
           GitHubProvider({
             clientId: process.env.GITHUB_ID,
             clientSecret: process.env.GITHUB_SECRET,
+            issuer: 'https://github.com/login/oauth',
           }),
         ]
       : []),
@@ -41,6 +42,7 @@ export const authOptions: AuthOptions = {
           GitlabProvider({
             clientId: process.env.GITLAB_ID,
             clientSecret: process.env.GITLAB_SECRET,
+            issuer: 'https://gitlab.com',
           }),
         ]
       : []),

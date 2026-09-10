@@ -2,12 +2,14 @@
 
 import { Uppy, UppyFile, UploadSuccessCallback } from '@uppy/core';
 import AWSS3 from '@uppy/aws-s3';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useUppyState } from './useUppyState';
-import { trpcClientReact, trpcPureClient } from '@/utils/api';
+import { trpcClient, trpcClientReact, trpcPureClient } from '@/utils/api';
 import { Button } from '@/components/Button';
 import { UploadButton } from '@/components/feature/UploadButton';
+import Image from 'next/image';
+import { Dropzone } from '@/components/feature/Dropzone';
+import { cn } from '@/lib/utils';
 
 export default function Home() {
   const [uppy] = useState(() => {
@@ -48,7 +50,7 @@ export default function Home() {
   const { data: fileList, isPending } = trpcClientReact.file.listFiles.useQuery();
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto p-2">
       <div>
         <UploadButton uppy={uppy}></UploadButton>
         <Button
@@ -59,31 +61,50 @@ export default function Home() {
           Upload
         </Button>
       </div>
-      <div>{progress}</div>
-      {isPending && <div>Loading...</div>}
-      <div className="flex flex-wrap gap-4">
-        {fileList?.map((file) => {
-          const isImag = file.contentType.startsWith('image/');
+      {isPending && <div>Loading</div>}
+      <Dropzone uppy={uppy}>
+        {(draging) => {
           return (
-            <div key={file.id} className="w-56 h-56 flex justify-center items-center border">
-              {isImag ? (
-                <img
-                  className="max-w-full max-h-full object-contain"
-                  src={file.url}
-                  alt={file.name}
-                ></img>
-              ) : (
-                <Image
-                  src="/unknown-file-types.png"
-                  alt="unknown file types"
-                  width={100}
-                  height={100}
-                ></Image>
+            <div
+              className={cn('flex flex-wrap gap-4 relative', draging && ' border border-dashed')}
+            >
+              {draging && (
+                <div className=" absolute inset-0 bg-secondary/30 flex justify-center items-center text-3xl">
+                  Drop File Here to Upload
+                </div>
               )}
+              {fileList?.map((file) => {
+                const isImage = file.contentType.startsWith('image');
+
+                return (
+                  <div key={file.id} className=" w-56 h-56 flex justify-center items-center border">
+                    {isImage ? (
+                      <img
+                        className="max-w-full max-h-full object-contain"
+                        src={file.url}
+                        alt={file.name}
+                      />
+                    ) : (
+                      <Image
+                        src="/unknown-file-types.png"
+                        alt="unknow file type"
+                        width={100}
+                        height={100}
+                      ></Image>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           );
-        })}
-      </div>
+        }}
+      </Dropzone>
+
+      {files.map((file) => {
+        const url = URL.createObjectURL(file.data);
+        return <img src={url} key={file.id}></img>;
+      })}
+      <div>{progress}</div>
     </div>
   );
 }
