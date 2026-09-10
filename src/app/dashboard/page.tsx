@@ -3,13 +3,14 @@
 import { Uppy, UppyFile, UploadSuccessCallback } from '@uppy/core';
 import AWSS3 from '@uppy/aws-s3';
 import { useEffect, useState } from 'react';
-import { useUppyState } from './useUppyState';
+import { useUppyState } from '@/hooks/useUppyState';
 import { trpcClient, trpcClientReact, trpcPureClient } from '@/utils/api';
 import { Button } from '@/components/Button';
 import { UploadButton } from '@/components/feature/UploadButton';
 import Image from 'next/image';
 import { Dropzone } from '@/components/feature/Dropzone';
 import { cn } from '@/lib/utils';
+import { usePasteFile } from '@/hooks/usePasteFile';
 
 export default function Home() {
   const [uppy] = useState(() => {
@@ -48,6 +49,16 @@ export default function Home() {
   }, [uppy]);
 
   const { data: fileList, isPending } = trpcClientReact.file.listFiles.useQuery();
+
+  usePasteFile({
+    onFilesPaste: (files) => {
+      files.forEach((file) => {
+        uppy.addFile({
+          data: file,
+        });
+      });
+    },
+  });
 
   return (
     <div className="container mx-auto p-2">
